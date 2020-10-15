@@ -36,12 +36,12 @@
 
     <h2>greetings, {{username}}. </h2>
 
-    <p class="other_messages"><strong>kerry: </strong>hello</p>
-    <p class="other_messages"><strong>alice: </strong>hello</p>
-    <p class="other_messages"><strong>rachel: </strong>hello</p>
-    <p class="other_messages"><strong>chad: </strong>hello</p>
+    {% for message in messages %}
+    <p class="other_messages"><strong>{{message.author}}: </strong>{{message.message}}</p>
+    {% endfor %}
 
-    <form>
+    <form method="post" action="/chat">
+        <input type="hidden" name="username" value="{{username}}">
         <input type="text" name="message" placeholder="type here...">
         <input id="login" type="submit" value="send">
     </form>

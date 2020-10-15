@@ -6,9 +6,18 @@ app = Flask(__name__)
 def hello_world():
     return render_template("index.html")
 
-@app.route('/chat')
+messages=[]
+
+@app.route('/chat', methods=["GET","POST"])
 def chat():
-    return render_template("chat_page.html", username=request.args.get("username"))
+    if request.method == "POST":
+        username=request.form["username"]
+        message=request.form["message"]
+        message_info={"author":username, "message":message}
+        messages.append(message_info)
+    elif request.method == "GET":
+        username=request.args.get("username")
+    return render_template("chat_page.html", username=username, messages=messages)
 
 app.run(debug=True)
 
