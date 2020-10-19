@@ -4,19 +4,7 @@
 
     <meta charset="UTF-8">
     <title>Title</title>
-
-    <style>
-
-           .other_messages {border-left: 6px solid #0087bd; background-color: #f2eeed; color: #00aff5;}
-
-           body {font-family: 'Cutive Mono', monospace;}
-
-           ul {list-style-type: none; margin: 0; padding: 0; overflow: hidden;}
-           #login {display: block; width: 60px; color: white;}
-           li {float: left;}
-           #login {display: block; padding: 8px; background-color: #0087bd;}
-
-    </style>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 
 </head>
 
@@ -24,7 +12,7 @@
 
     <h1>welcome to the chat site</h1>
 
-    <form method="get" action="/chat">
+    <form method="get" action="/login">
 
         <input type="text" name="username" placeholder="type your username">
         <input id="login" type="submit" value="chat">

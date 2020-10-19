@@ -40,10 +40,15 @@
     <p class="other_messages"><strong>{{message.author}}: </strong>{{message.message}}</p>
     {% endfor %}
 
-    <form method="post" action="/chat">
+    <form method="post" action="/chat/{{username}}">
         <input type="hidden" name="username" value="{{username}}">
         <input type="text" name="message" placeholder="type here...">
         <input id="login" type="submit" value="send">
+    </form>
+
+    <form method="get" action="/chat/{{username}}">
+        <input type="hidden" name="username" value="{{username}}">
+        <input type="submit" value="refresh">
     </form>
 
 </body>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -8,18 +8,22 @@ def hello_world():
 
 messages=[]
 
-@app.route('/chat', methods=["GET","POST"])
-def chat():
+@app.route('/chat/<username>', methods=["GET","POST"])
+def chat(username):
     if request.method == "POST":
-        username=request.form["username"]
         message=request.form["message"]
         message_info={"author":username, "message":message}
         messages.append(message_info)
-    elif request.method == "GET":
-        username=request.args.get("username")
     return render_template("chat_page.html", username=username, messages=messages)
+
+@app.route('/login')
+def login():
+    username=request.args.get("username")
+    return redirect(url_for("chat", username=username))
+
 
 app.run(debug=True)
 
 # http://127.0.0.1:5000/chat
 
+#homework: get chat fully working (new username thing) sending msgs needs to work again
