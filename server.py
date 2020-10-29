@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
+
+app.secret_key = "35veowirfhu3o84,.'k;"
 
 @app.route('/')
 def hello_world():
@@ -8,8 +10,9 @@ def hello_world():
 
 messages=[]
 
-@app.route('/chat/<username>', methods=["GET","POST"])
-def chat(username):
+@app.route('/chat', methods=["GET","POST"])
+def chat():
+    username = session["username"]
     if request.method == "POST":
         message=request.form["message"]
         message_info={"author":username, "message":message}
@@ -18,8 +21,9 @@ def chat(username):
 
 @app.route('/login')
 def login():
-    username=request.args.get("username")
-    return redirect(url_for("chat", username=username))
+    username = request.args.get("username")
+    session["username"] = username
+    return redirect(url_for("chat"))
 
 
 app.run(debug=True)
