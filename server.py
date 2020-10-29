@@ -4,6 +4,8 @@ app = Flask(__name__)
 
 app.secret_key = "35veowirfhu3o84,.'k;"
 
+users={"bob":"bobpw", "jeff":"jeffpw"}
+
 @app.route('/')
 def hello_world():
     return render_template("index.html")
@@ -19,11 +21,16 @@ def chat():
         messages.append(message_info)
     return render_template("chat_page.html", username=username, messages=messages)
 
-@app.route('/login')
+@app.route('/login', methods=["POST"])
 def login():
-    username = request.args.get("username")
-    session["username"] = username
-    return redirect(url_for("chat"))
+    username = request.form["username"]
+    password = request.form["password"]
+
+    if username in users and users[username] == password:
+        session["username"] = username
+        return redirect(url_for("chat"))
+    else:
+        return redirect("/")
 
 
 app.run(debug=True)

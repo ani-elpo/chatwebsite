@@ -12,9 +12,16 @@
 
     <h1>welcome to the chat site</h1>
 
-    <form method="get" action="/login">
+    <form method="post" action="/login">
 
-        <input type="text" name="username" placeholder="type your username">
+        <label>type your username
+            <input type="text" name="username">
+        </label>
+
+        <label>type your password
+            <input type="password" name="password">
+        </label>
+
         <input id="login" type="submit" value="chat">
 
     </form>

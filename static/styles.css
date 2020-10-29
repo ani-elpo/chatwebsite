@@ -6,3 +6,7 @@
            #login {display: block; width: 60px; color: white;}
            li {float: left;}
            #login {display: block; padding: 8px; background-color: #0087bd;
+
+           label {
+           display: block;
+           }
