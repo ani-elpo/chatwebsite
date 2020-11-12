@@ -24,9 +24,10 @@
 
         <input id="login" type="submit" value="chat">
 
-        {% if username %}
+        {% if username_incorrect %}
             <h2>wrong username</h2>
-        {% elif password %}
+        {% endif %}
+        {% if password_incorrect %}
             <h2>wrong password</h2>
         {% endif %}
     </form>

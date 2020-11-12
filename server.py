@@ -7,11 +7,21 @@ app.secret_key = "35veowirfhu3o84,.'k;"
 users={"bob":"bobpw", "jeff":"jeffpw"}
 
 @app.route('/')
-def hello_world():
-    if "password_correct" in session:
-        username = session["username"]
-        password_correct = session["password_correct"]
-    return render_template("index.html")
+def index():
+
+    username_incorrect = False
+    password_incorrect = False
+
+    if "password_incorrect" in session:
+        password_incorrect = session["password_incorrect"]
+        del session["password_incorrect"]
+
+    if "username_incorrect" in session:
+        username_incorrect = session["username_incorrect"]
+        del session["username_incorrect"]
+
+    return render_template("index.html", username_incorrect=username_incorrect, password_incorrect=password_incorrect)
+
 
 messages=[]
 
@@ -33,15 +43,19 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    if username in users and users[username] == password:
-        session["username"] = username
-        password_correct = True
-        session["password_correct"] = password_correct
-        return redirect(url_for("chat"))
-    else:
-        password_correct = False
-        session["password_correct"] = password_correct
+    if username not in users:
+        session["username_incorrect"] = True
         return redirect("/")
+
+    if users[username] != password:
+        session["password_incorrect"] = True
+        return redirect("/")
+
+    session["username_incorrect"] = False
+    session["username"] = username
+    session["password_incorrect"] = False
+    return redirect(url_for("chat"))
+
 
 @app.route('/logout')
 def logout():
@@ -52,6 +66,5 @@ def logout():
 app.run(debug=True)
 
 # http://127.0.0.1:5000/chat
-
-#homework: display "password incorrect" message on login page instead of just blank screen
-# find a better way to store passwords?
+# flash messages (flask docs)
+# homework: wrong username message
