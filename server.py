@@ -49,7 +49,7 @@ def login():
     conn = sqlite3.connect('db.sqlite3')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute(f'SELECT * FROM users WHERE username = "{username}"')
+    c.execute(f'SELECT * FROM users WHERE username = :username', {"username": username})
     row = c.fetchone()
 
     if row is None:
@@ -75,7 +75,7 @@ def register():
         conn = sqlite3.connect('db.sqlite3')
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
-        c.execute(f'INSERT INTO users (username, password) VALUES ("{username}", "{password}")')
+        c.execute(f'INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
         conn.commit()
         return redirect("/")
 
