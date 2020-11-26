@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+import sqlite3
+
+
 
 app = Flask(__name__)
 
@@ -43,11 +46,17 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    if username not in users:
+    conn = sqlite3.connect('db.sqlite3')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute(f'SELECT * FROM users WHERE username = "{username}"')
+    row = c.fetchone()
+
+    if row is None:
         session["username_incorrect"] = True
         return redirect("/")
 
-    if users[username] != password:
+    if row["password"] != password:
         session["password_incorrect"] = True
         return redirect("/")
 
@@ -55,6 +64,22 @@ def login():
     session["username"] = username
     session["password_incorrect"] = False
     return redirect(url_for("chat"))
+
+
+@app.route('/register', methods=["GET","POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = sqlite3.connect('db.sqlite3')
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute(f'INSERT INTO users (username, password) VALUES ("{username}", "{password}")')
+        conn.commit()
+        return redirect("/")
+
+    return render_template("register.html")
 
 
 @app.route('/logout')
@@ -66,5 +91,4 @@ def logout():
 app.run(debug=True)
 
 # http://127.0.0.1:5000/chat
-# flash messages (flask docs)
-# homework: wrong username message
+# add a registration page where you can register if you are a new user => insert new record into database that you can use to login later
