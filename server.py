@@ -9,6 +9,12 @@ app.secret_key = "35veowirfhu3o84,.'k;"
 
 users={"bob":"bobpw", "jeff":"jeffpw"}
 
+
+def getdb():
+    conn = sqlite3.connect('db.sqlite3')
+    conn.row_factory = sqlite3.Row
+    return conn.cursor()
+
 @app.route('/')
 def index():
 
@@ -41,14 +47,13 @@ def chat():
         messages.append(message_info)
     return render_template("chat_page.html", username=username, messages=messages)
 
+
 @app.route('/login', methods=["POST"])
 def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    conn = sqlite3.connect('db.sqlite3')
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
+    c = getdb()
     c.execute(f'SELECT * FROM users WHERE username = :username', {"username": username})
     row = c.fetchone()
 
@@ -72,11 +77,9 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
 
-        conn = sqlite3.connect('db.sqlite3')
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
+        c = getdb()
         c.execute(f'INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
-        conn.commit()
+        c.connection.commit()
         return redirect("/")
 
     return render_template("register.html")
