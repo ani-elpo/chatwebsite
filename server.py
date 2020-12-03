@@ -34,6 +34,7 @@ def index():
 
 messages=[]
 
+
 @app.route('/chat', methods=["GET","POST"])
 def chat():
     if "username" not in session:
@@ -41,11 +42,18 @@ def chat():
 
     username = session["username"]
 
+    c = getdb()
+
     if request.method == "POST":
-        message=request.form["message"]
-        message_info={"author":username, "message":message}
-        messages.append(message_info)
-    return render_template("chat_page.html", username=username, messages=messages)
+
+        message = request.form["message"]
+        c.execute(f'INSERT INTO messages (message, user_id, date) VALUES (?,?,?)', (message, session["user_id"], "date"))
+        c.connection.commit()
+
+    c.execute(f'SELECT messages.id, message, username FROM messages join users on users.id = messages.user_id')
+    rows = c.fetchall()
+
+    return render_template("chat_page.html", username=username, rows=rows)
 
 
 @app.route('/login', methods=["POST"])
@@ -67,6 +75,7 @@ def login():
 
     session["username_incorrect"] = False
     session["username"] = username
+    session["user_id"] = row["id"]
     session["password_incorrect"] = False
     return redirect(url_for("chat"))
 
@@ -94,4 +103,4 @@ def logout():
 app.run(debug=True)
 
 # http://127.0.0.1:5000/chat
-# add a registration page where you can register if you are a new user => insert new record into database that you can use to login later
+# rewrite the chat function so it gets messages from the messages table instead of a list. read about join (sql)
