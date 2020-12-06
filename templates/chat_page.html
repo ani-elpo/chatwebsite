@@ -37,7 +37,7 @@
     <h2>greetings, {{username}}. </h2>
 
     {% for row in rows %}
-    <p class="other_messages"><strong>{{row.username}}: </strong>{{row.message}}</p>
+    <p class="other_messages"><strong>{{row.username}}: </strong>{{row.message}} <em>[{{row.date}}]</em></p>
     {% endfor %}
 
     <form method="post" action="/chat">

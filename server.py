@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
-
-
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -14,6 +13,34 @@ def getdb():
     conn = sqlite3.connect('db.sqlite3')
     conn.row_factory = sqlite3.Row
     return conn.cursor()
+
+
+def login_user(username):
+    c = getdb()
+    c.execute(f'SELECT * FROM users WHERE username = :username', {"username": username})
+    row = c.fetchone()
+    return row
+
+
+def load_messages():
+    c = getdb()
+    c.execute(f'SELECT messages.id, message, username, date FROM messages join users on users.id = messages.user_id')
+    rows = c.fetchall()
+    return rows
+
+
+def post_messages(message, date, datetime_format):
+    c = getdb()
+    c.execute(f'INSERT INTO messages (message, user_id, date) VALUES (?,?,?)',
+              (message, session["user_id"], date.strftime(datetime_format)))
+    c.connection.commit()
+
+
+def register_user(username, password):
+    c = getdb()
+    c.execute(f'INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+    c.connection.commit()
+
 
 @app.route('/')
 def index():
@@ -32,9 +59,6 @@ def index():
     return render_template("index.html", username_incorrect=username_incorrect, password_incorrect=password_incorrect)
 
 
-messages=[]
-
-
 @app.route('/chat', methods=["GET","POST"])
 def chat():
     if "username" not in session:
@@ -42,16 +66,16 @@ def chat():
 
     username = session["username"]
 
-    c = getdb()
-
     if request.method == "POST":
 
         message = request.form["message"]
-        c.execute(f'INSERT INTO messages (message, user_id, date) VALUES (?,?,?)', (message, session["user_id"], "date"))
-        c.connection.commit()
 
-    c.execute(f'SELECT messages.id, message, username FROM messages join users on users.id = messages.user_id')
-    rows = c.fetchall()
+        date = datetime.now()
+        DATETIME_FORMAT = '%d/%m/%Y %H:%M'
+
+        post_messages(message, date, DATETIME_FORMAT)
+
+    load_messages()
 
     return render_template("chat_page.html", username=username, rows=rows)
 
@@ -61,9 +85,7 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    c = getdb()
-    c.execute(f'SELECT * FROM users WHERE username = :username', {"username": username})
-    row = c.fetchone()
+    login_user(username)
 
     if row is None:
         session["username_incorrect"] = True
@@ -80,15 +102,15 @@ def login():
     return redirect(url_for("chat"))
 
 
+
 @app.route('/register', methods=["GET","POST"])
 def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        c = getdb()
-        c.execute(f'INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
-        c.connection.commit()
+        register_user(username, password)
+
         return redirect("/")
 
     return render_template("register.html")
@@ -103,4 +125,5 @@ def logout():
 app.run(debug=True)
 
 # http://127.0.0.1:5000/chat
-# rewrite the chat function so it gets messages from the messages table instead of a list. read about join (sql)
+# create separate functions for all the database code (refactoring) e.g. load messages, save messages, etc.
+# make the date look nicer in the message
