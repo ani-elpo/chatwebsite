@@ -75,7 +75,7 @@ def chat():
 
         post_messages(message, date, DATETIME_FORMAT)
 
-    load_messages()
+    rows = load_messages()
 
     return render_template("chat_page.html", username=username, rows=rows)
 
@@ -85,7 +85,7 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    login_user(username)
+    row = login_user(username)
 
     if row is None:
         session["username_incorrect"] = True
@@ -100,7 +100,6 @@ def login():
     session["user_id"] = row["id"]
     session["password_incorrect"] = False
     return redirect(url_for("chat"))
-
 
 
 @app.route('/register', methods=["GET","POST"])

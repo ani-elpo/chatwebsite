@@ -1,17 +1,42 @@
-.other_messages {border-left: 6px solid #0087bd; background-color: #f2eeed; color: #00aff5;}
+.other_messages {
+    border-left: 6px solid #0087bd;
+    background-color: #f2eeed;
+    color: #00aff5;
+}
 
-           body {font-family: 'Cutive Mono', monospace;}
+body {
+    font-family: 'Cutive Mono', monospace;
+}
 
-           ul {list-style-type: none; margin: 0; padding: 0; overflow: hidden;}
-           #login {display: block; width: 60px; color: white;}
-           li {float: left;}
-           #login {display: block; padding: 8px; background-color: #0087bd;
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
 
-           label {
-           display: block;
-           }
+#login {
+    display: block;
+    width: 60px;
+    color: white;
+    padding: 8px;
+    background-color: #0087bd;
+}
 
-           a {
-           display: block; padding: 8px; background-color: #0087bd;
-           }
+li {
+    float: left;
+}
+
+label {
+    display: block;
+}
+
+a {
+    display: block; padding: 8px; background-color: #0087bd;
+}
+
+#message_box {
+    height: 300px;
+    overflow: scroll;
+}
 
